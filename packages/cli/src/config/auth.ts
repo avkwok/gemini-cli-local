@@ -9,6 +9,10 @@ import { loadEnvironment } from './config.js';
 
 export const validateAuthMethod = (authMethod: string): string | null => {
   loadEnvironment();
+  if (authMethod === AuthType.USE_LOCAL_LLM) {
+    return null; // No validation needed for local LLM
+  }
+  
   if (authMethod === AuthType.LOGIN_WITH_GOOGLE_PERSONAL) {
     return null;
   }

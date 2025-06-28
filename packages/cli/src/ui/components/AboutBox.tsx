@@ -14,8 +14,6 @@ interface AboutBoxProps {
   osVersion: string;
   sandboxEnv: string;
   modelVersion: string;
-  selectedAuthType: string;
-  gcpProject: string;
 }
 
 export const AboutBox: React.FC<AboutBoxProps> = ({
@@ -23,8 +21,6 @@ export const AboutBox: React.FC<AboutBoxProps> = ({
   osVersion,
   sandboxEnv,
   modelVersion,
-  selectedAuthType,
-  gcpProject,
 }) => (
   <Box
     borderStyle="round"
@@ -36,7 +32,7 @@ export const AboutBox: React.FC<AboutBoxProps> = ({
   >
     <Box marginBottom={1}>
       <Text bold color={Colors.AccentPurple}>
-        About Gemini CLI
+        About Gemma CLI
       </Text>
     </Box>
     <Box flexDirection="row">
@@ -91,29 +87,5 @@ export const AboutBox: React.FC<AboutBoxProps> = ({
         <Text>{osVersion}</Text>
       </Box>
     </Box>
-    <Box flexDirection="row">
-      <Box width="35%">
-        <Text bold color={Colors.LightBlue}>
-          Auth Method
-        </Text>
-      </Box>
-      <Box>
-        <Text>
-          {selectedAuthType.startsWith('oauth') ? 'OAuth' : selectedAuthType}
-        </Text>
-      </Box>
-    </Box>
-    {gcpProject && (
-      <Box flexDirection="row">
-        <Box width="35%">
-          <Text bold color={Colors.LightBlue}>
-            GCP Project
-          </Text>
-        </Box>
-        <Box>
-          <Text>{gcpProject}</Text>
-        </Box>
-      </Box>
-    )}
   </Box>
 );

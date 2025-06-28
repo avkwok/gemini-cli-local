@@ -574,24 +574,8 @@ describe('useTextBuffer', () => {
       const { result } = renderHook(() =>
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
-      act(() =>
-        result.current.handleInput({
-          name: 'h',
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: 'h',
-        }),
-      );
-      act(() =>
-        result.current.handleInput({
-          name: 'i',
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: 'i',
-        }),
-      );
+      act(() => result.current.handleInput('h', {}));
+      act(() => result.current.handleInput('i', {}));
       expect(getBufferState(result).text).toBe('hi');
     });
 
@@ -599,15 +583,7 @@ describe('useTextBuffer', () => {
       const { result } = renderHook(() =>
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
-      act(() =>
-        result.current.handleInput({
-          name: 'return',
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: '\r',
-        }),
-      );
+      act(() => result.current.handleInput(undefined, { return: true }));
       expect(getBufferState(result).lines).toEqual(['', '']);
     });
 
@@ -620,15 +596,7 @@ describe('useTextBuffer', () => {
         }),
       );
       act(() => result.current.move('end'));
-      act(() =>
-        result.current.handleInput({
-          name: 'backspace',
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: '\x7f',
-        }),
-      );
+      act(() => result.current.handleInput(undefined, { backspace: true }));
       expect(getBufferState(result).text).toBe('');
     });
 
@@ -703,25 +671,9 @@ describe('useTextBuffer', () => {
         }),
       );
       act(() => result.current.move('end')); // cursor [0,2]
-      act(() =>
-        result.current.handleInput({
-          name: 'left',
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: '\x1b[D',
-        }),
-      ); // cursor [0,1]
+      act(() => result.current.handleInput(undefined, { leftArrow: true })); // cursor [0,1]
       expect(getBufferState(result).cursor).toEqual([0, 1]);
-      act(() =>
-        result.current.handleInput({
-          name: 'right',
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: '\x1b[C',
-        }),
-      ); // cursor [0,2]
+      act(() => result.current.handleInput(undefined, { rightArrow: true })); // cursor [0,2]
       expect(getBufferState(result).cursor).toEqual([0, 2]);
     });
 
@@ -731,15 +683,7 @@ describe('useTextBuffer', () => {
       );
       const textWithAnsi = '\x1B[31mHello\x1B[0m \x1B[32mWorld\x1B[0m';
       // Simulate pasting by calling handleInput with a string longer than 1 char
-      act(() =>
-        result.current.handleInput({
-          name: undefined,
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: textWithAnsi,
-        }),
-      );
+      act(() => result.current.handleInput(textWithAnsi, {}));
       expect(getBufferState(result).text).toBe('Hello World');
     });
 
@@ -747,15 +691,7 @@ describe('useTextBuffer', () => {
       const { result } = renderHook(() =>
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
-      act(() =>
-        result.current.handleInput({
-          name: 'return',
-          ctrl: false,
-          meta: false,
-          shift: true,
-          sequence: '\r',
-        }),
-      ); // Simulates Shift+Enter in VSCode terminal
+      act(() => result.current.handleInput('\r', {})); // Simulates Shift+Enter in VSCode terminal
       expect(getBufferState(result).lines).toEqual(['', '']);
     });
 
@@ -944,15 +880,7 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
       const textWithAnsi = '\x1B[31mHello\x1B[0m';
-      act(() =>
-        result.current.handleInput({
-          name: undefined,
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: textWithAnsi,
-        }),
-      );
+      act(() => result.current.handleInput(textWithAnsi, {}));
       expect(getBufferState(result).text).toBe('Hello');
     });
 
@@ -961,15 +889,7 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
       const textWithControlChars = 'H\x07e\x08l\x0Bl\x0Co'; // BELL, BACKSPACE, VT, FF
-      act(() =>
-        result.current.handleInput({
-          name: undefined,
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: textWithControlChars,
-        }),
-      );
+      act(() => result.current.handleInput(textWithControlChars, {}));
       expect(getBufferState(result).text).toBe('Hello');
     });
 
@@ -978,15 +898,7 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
       const textWithMixed = '\u001B[4mH\u001B[0mello';
-      act(() =>
-        result.current.handleInput({
-          name: undefined,
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: textWithMixed,
-        }),
-      );
+      act(() => result.current.handleInput(textWithMixed, {}));
       expect(getBufferState(result).text).toBe('Hello');
     });
 
@@ -995,15 +907,7 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
       const validText = 'Hello World\nThis is a test.';
-      act(() =>
-        result.current.handleInput({
-          name: undefined,
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: validText,
-        }),
-      );
+      act(() => result.current.handleInput(validText, {}));
       expect(getBufferState(result).text).toBe(validText);
     });
 
@@ -1012,15 +916,7 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
         useTextBuffer({ viewport, isValidPath: () => false }),
       );
       const pastedText = '\u001B[4mPasted\u001B[4m Text';
-      act(() =>
-        result.current.handleInput({
-          name: undefined,
-          ctrl: false,
-          meta: false,
-          shift: false,
-          sequence: pastedText,
-        }),
-      );
+      act(() => result.current.handleInput(pastedText, {}));
       expect(getBufferState(result).text).toBe('Pasted Text');
     });
   });

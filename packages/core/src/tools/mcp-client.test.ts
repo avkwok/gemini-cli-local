@@ -14,7 +14,7 @@ import {
   afterEach,
   Mocked,
 } from 'vitest';
-import { discoverMcpTools, sanitizeParameters } from './mcp-client.js';
+import { discoverMcpTools, sanatizeParameters } from './mcp-client.js';
 import { Schema, Type } from '@google/genai';
 import { Config, MCPServerConfig } from '../config/config.js';
 import { DiscoveredMCPTool } from './mcp-tool.js';
@@ -538,10 +538,10 @@ describe('discoverMcpTools', () => {
   });
 });
 
-describe('sanitizeParameters', () => {
+describe('sanatizeParameters', () => {
   it('should do nothing for an undefined schema', () => {
     const schema = undefined;
-    sanitizeParameters(schema);
+    sanatizeParameters(schema);
   });
 
   it('should remove default when anyOf is present', () => {
@@ -549,11 +549,11 @@ describe('sanitizeParameters', () => {
       anyOf: [{ type: Type.STRING }, { type: Type.NUMBER }],
       default: 'hello',
     };
-    sanitizeParameters(schema);
+    sanatizeParameters(schema);
     expect(schema.default).toBeUndefined();
   });
 
-  it('should recursively sanitize items in anyOf', () => {
+  it('should recursively sanatize items in anyOf', () => {
     const schema: Schema = {
       anyOf: [
         {
@@ -563,22 +563,22 @@ describe('sanitizeParameters', () => {
         { type: Type.NUMBER },
       ],
     };
-    sanitizeParameters(schema);
+    sanatizeParameters(schema);
     expect(schema.anyOf![0].default).toBeUndefined();
   });
 
-  it('should recursively sanitize items in items', () => {
+  it('should recursively sanatize items in items', () => {
     const schema: Schema = {
       items: {
         anyOf: [{ type: Type.STRING }],
         default: 'world',
       },
     };
-    sanitizeParameters(schema);
+    sanatizeParameters(schema);
     expect(schema.items!.default).toBeUndefined();
   });
 
-  it('should recursively sanitize items in properties', () => {
+  it('should recursively sanatize items in properties', () => {
     const schema: Schema = {
       properties: {
         prop1: {
@@ -587,7 +587,7 @@ describe('sanitizeParameters', () => {
         },
       },
     };
-    sanitizeParameters(schema);
+    sanatizeParameters(schema);
     expect(schema.properties!.prop1.default).toBeUndefined();
   });
 
@@ -614,7 +614,7 @@ describe('sanitizeParameters', () => {
         },
       },
     };
-    sanitizeParameters(schema);
+    sanatizeParameters(schema);
     expect(schema.properties!.prop1.items!.default).toBeUndefined();
     const nestedProp =
       schema.properties!.prop2.anyOf![0].properties!.nestedProp;

@@ -71,8 +71,7 @@ export class GeminiClient {
     );
     this.chat = await this.startChat();
   }
-
-  getContentGenerator(): ContentGenerator {
+  private getContentGenerator(): ContentGenerator {
     if (!this.contentGenerator) {
       throw new Error('Content generator not initialized');
     }

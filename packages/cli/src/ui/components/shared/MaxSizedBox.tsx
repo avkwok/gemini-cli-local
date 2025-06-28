@@ -116,15 +116,13 @@ export const MaxSizedBox: React.FC<MaxSizedBoxProps> = ({
     throw new Error('maxWidth must be defined when maxHeight is set.');
   }
   function visitRows(element: React.ReactNode) {
-    if (!React.isValidElement<{ children?: React.ReactNode }>(element)) {
+    if (!React.isValidElement(element)) {
       return;
     }
-
     if (element.type === Fragment) {
       React.Children.forEach(element.props.children, visitRows);
       return;
     }
-
     if (element.type === Box) {
       layoutInkElementAsStyledText(element, maxWidth!, laidOutStyledText);
       return;
@@ -248,10 +246,7 @@ interface Row {
  * @returns An array of `Row` objects.
  */
 function visitBoxRow(element: React.ReactNode): Row {
-  if (
-    !React.isValidElement<{ children?: React.ReactNode }>(element) ||
-    element.type !== Box
-  ) {
+  if (!React.isValidElement(element) || element.type !== Box) {
     debugReportError(
       `All children of MaxSizedBox must be <Box> elements`,
       element,
@@ -263,15 +258,7 @@ function visitBoxRow(element: React.ReactNode): Row {
   }
 
   if (enableDebugLog) {
-    const boxProps = element.props as {
-      children?: React.ReactNode | undefined;
-      readonly flexDirection?:
-        | 'row'
-        | 'column'
-        | 'row-reverse'
-        | 'column-reverse'
-        | undefined;
-    };
+    const boxProps = element.props;
     // Ensure the Box has no props other than the default ones and key.
     let maxExpectedProps = 4;
     if (boxProps.children !== undefined) {
@@ -336,13 +323,14 @@ function visitBoxRow(element: React.ReactNode): Row {
       return;
     }
 
-    if (!React.isValidElement<{ children?: React.ReactNode }>(element)) {
+    if (!React.isValidElement(element)) {
       debugReportError('Invalid element.', element);
       return;
     }
 
     if (element.type === Fragment) {
-      React.Children.forEach(element.props.children, (child) =>
+      const fragmentChildren = element.props.children;
+      React.Children.forEach(fragmentChildren, (child) =>
         visitRowChild(child, parentProps),
       );
       return;

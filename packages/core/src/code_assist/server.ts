@@ -6,30 +6,28 @@
 
 import { AuthClient } from 'google-auth-library';
 import {
-  CodeAssistGlobalUserSettingResponse,
-  LoadCodeAssistRequest,
   LoadCodeAssistResponse,
-  LongrunningOperationResponse,
+  LoadCodeAssistRequest,
   OnboardUserRequest,
-  SetCodeAssistGlobalUserSettingRequest,
+  LongrunningOperationResponse,
 } from './types.js';
 import {
+  GenerateContentResponse,
+  GenerateContentParameters,
   CountTokensParameters,
+  EmbedContentResponse,
   CountTokensResponse,
   EmbedContentParameters,
-  EmbedContentResponse,
-  GenerateContentParameters,
-  GenerateContentResponse,
 } from '@google/genai';
 import * as readline from 'readline';
 import { ContentGenerator } from '../core/contentGenerator.js';
 import {
-  CaCountTokenResponse,
   CaGenerateContentResponse,
-  fromCountTokenResponse,
+  toGenerateContentRequest,
   fromGenerateContentResponse,
   toCountTokenRequest,
-  toGenerateContentRequest,
+  fromCountTokenResponse,
+  CaCountTokenResponse,
 } from './converter.js';
 import { PassThrough } from 'node:stream';
 
@@ -95,21 +93,6 @@ export class CodeAssistServer implements ContentGenerator {
     );
   }
 
-  async getCodeAssistGlobalUserSetting(): Promise<CodeAssistGlobalUserSettingResponse> {
-    return await this.getEndpoint<CodeAssistGlobalUserSettingResponse>(
-      'getCodeAssistGlobalUserSetting',
-    );
-  }
-
-  async setCodeAssistGlobalUserSetting(
-    req: SetCodeAssistGlobalUserSettingRequest,
-  ): Promise<CodeAssistGlobalUserSettingResponse> {
-    return await this.callEndpoint<CodeAssistGlobalUserSettingResponse>(
-      'setCodeAssistGlobalUserSetting',
-      req,
-    );
-  }
-
   async countTokens(req: CountTokensParameters): Promise<CountTokensResponse> {
     const resp = await this.callEndpoint<CaCountTokenResponse>(
       'countTokens',
@@ -138,20 +121,6 @@ export class CodeAssistServer implements ContentGenerator {
       },
       responseType: 'json',
       body: JSON.stringify(req),
-      signal,
-    });
-    return res.data as T;
-  }
-
-  async getEndpoint<T>(method: string, signal?: AbortSignal): Promise<T> {
-    const res = await this.auth.request({
-      url: `${CODE_ASSIST_ENDPOINT}/${CODE_ASSIST_API_VERSION}:${method}`,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...this.httpOptions.headers,
-      },
-      responseType: 'json',
       signal,
     });
     return res.data as T;

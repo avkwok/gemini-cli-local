@@ -52,10 +52,10 @@ if (!geminiSandbox) {
     const geminiEnv = join(currentDir, '.gemini', '.env');
     const regularEnv = join(currentDir, '.env');
     if (existsSync(geminiEnv)) {
-      dotenv.config({ path: geminiEnv, quiet: true });
+      dotenv.config({ path: geminiEnv });
       break;
     } else if (existsSync(regularEnv)) {
-      dotenv.config({ path: regularEnv, quiet: true });
+      dotenv.config({ path: regularEnv });
       break;
     }
     currentDir = dirname(currentDir);

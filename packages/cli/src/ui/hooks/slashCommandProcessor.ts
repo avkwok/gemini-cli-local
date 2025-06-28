@@ -76,7 +76,6 @@ export const useSlashCommandProcessor = (
   toggleCorgiMode: () => void,
   showToolDescriptions: boolean = false,
   setQuittingMessages: (message: HistoryItem[]) => void,
-  openPrivacyNotice: () => void,
 ) => {
   const session = useSessionStats();
   const gitService = useMemo(() => {
@@ -104,8 +103,6 @@ export const useSlashCommandProcessor = (
           osVersion: message.osVersion,
           sandboxEnv: message.sandboxEnv,
           modelVersion: message.modelVersion,
-          selectedAuthType: message.selectedAuthType,
-          gcpProject: message.gcpProject,
         };
       } else if (message.type === MessageType.STATS) {
         historyItemContent = {
@@ -253,13 +250,6 @@ export const useSlashCommandProcessor = (
         description: 'set external editor preference',
         action: (_mainCommand, _subCommand, _args) => {
           openEditorDialog();
-        },
-      },
-      {
-        name: 'privacy',
-        description: 'display the privacy notice',
-        action: (_mainCommand, _subCommand, _args) => {
-          openPrivacyNotice();
         },
       },
       {
@@ -606,8 +596,6 @@ export const useSlashCommandProcessor = (
           }
           const modelVersion = config?.getModel() || 'Unknown';
           const cliVersion = await getCliVersion();
-          const selectedAuthType = settings.merged.selectedAuthType || '';
-          const gcpProject = process.env.GOOGLE_CLOUD_PROJECT || '';
           addMessage({
             type: MessageType.ABOUT,
             timestamp: new Date(),
@@ -615,8 +603,6 @@ export const useSlashCommandProcessor = (
             osVersion,
             sandboxEnv,
             modelVersion,
-            selectedAuthType,
-            gcpProject,
           });
         },
       },
@@ -1021,7 +1007,6 @@ export const useSlashCommandProcessor = (
     toggleCorgiMode,
     savedChatTags,
     config,
-    settings,
     showToolDescriptions,
     session,
     gitService,
@@ -1030,7 +1015,6 @@ export const useSlashCommandProcessor = (
     setQuittingMessages,
     pendingCompressionItemRef,
     setPendingCompressionItem,
-    openPrivacyNotice,
   ]);
 
   const handleSlashCommand = useCallback(

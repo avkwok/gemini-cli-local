@@ -304,7 +304,7 @@ async function connectAndDiscover(
           toolNameForModel.slice(0, 28) + '___' + toolNameForModel.slice(-32);
       }
 
-      sanitizeParameters(funcDecl.parameters);
+      sanatizeParameters(funcDecl.parameters);
 
       // Ensure parameters is a valid JSON schema object, default to empty if not.
       const parameterSchema: Record<string, unknown> =
@@ -362,7 +362,7 @@ async function connectAndDiscover(
   }
 }
 
-export function sanitizeParameters(schema?: Schema) {
+export function sanatizeParameters(schema?: Schema) {
   if (!schema) {
     return;
   }
@@ -370,15 +370,15 @@ export function sanitizeParameters(schema?: Schema) {
     // Vertex AI gets confused if both anyOf and default are set.
     schema.default = undefined;
     for (const item of schema.anyOf) {
-      sanitizeParameters(item);
+      sanatizeParameters(item);
     }
   }
   if (schema.items) {
-    sanitizeParameters(schema.items);
+    sanatizeParameters(schema.items);
   }
   if (schema.properties) {
     for (const item of Object.values(schema.properties)) {
-      sanitizeParameters(item);
+      sanatizeParameters(item);
     }
   }
 }
