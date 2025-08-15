@@ -111,6 +111,6 @@ export async function createContentGenerator(
   // Always use local LLM (Ollama)
   return new OpenAICompatibleContentGenerator({
     endpoint: process.env.LOCAL_LLM_ENDPOINT || 'http://localhost:11434/v1',
-    model: process.env.LOCAL_LLM_MODEL || 'gemma3n:latest',
+    model: process.env.LOCAL_LLM_MODEL || 'gpt-oss:20b',
   });
 }
